@@ -23,11 +23,29 @@ class KNNClassifier:
 
     def fit(self, X, y=None):
         self._finder.fit(X)
-        self._labels = np.asarray(y)
+        self._labels = np.asarray(y).flatten()
+        self._classes = np.unique(y)
         return self
 
     def _predict_precomputed(self, indices, distances):
-        raise NotImplementedError()
+        N = len(indices)
+        neighbours_labels = np.array([self._labels[inds] for inds in indices])
+        # neighbours_labels = np.ones((1, self._labels.shape[0])).dot(self._labels)
+        if self._weights == 'uniform':
+            weights = np.ones(indices.shape)
+        else:
+            weights = distances
+        if self._finder.metric == 'cosine':
+            weights = 1 - weights
+        weights = 1 / weights
+
+        class_weights = np.zeros((N, len(self._classes)))
+        for i, c in enumerate(self._classes):
+            mask = (neighbours_labels == c).astype(int)
+            class_weights[:, i] = (weights * mask).sum(axis=1)
+
+        best_classes = self._classes[class_weights.argmax(axis=1)]        
+        return best_classes
 
     def kneighbors(self, X, return_distance=False):
         return self._finder.kneighbors(X, return_distance=return_distance)
