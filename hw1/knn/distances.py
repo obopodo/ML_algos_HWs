@@ -2,6 +2,9 @@ import numpy as np
 
 def euclidean_distance(x: np.array, y: np.array) -> np.array:
     # D = (y - x)^2 = y^2 + x^2 - 2*y*x
+    x = np.array(x)
+    y = np.array(y)
+
     if len(x.shape) == 1:
         x = x.reshape(1, -1)
     if len(y.shape) == 1:
@@ -23,6 +26,9 @@ def euclidean_distance(x: np.array, y: np.array) -> np.array:
 
 def cosine_distance(x: np.array, y: np.array) -> np.array:
     # x * y = |x|*|y|*cos(x, y) => cos(x, y) = (x * y) / (|x| * |y|)
+    x = np.array(x)
+    y = np.array(y)
+    
     if len(x.shape) == 1:
         x = x.reshape(1, -1)
     if len(y.shape) == 1:
